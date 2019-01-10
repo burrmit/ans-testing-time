@@ -1,0 +1,17 @@
+---
+- name: Execute playbooks if during a specific time
+  hosts: localhost
+  gather_facts: true
+  vars:
+    v_ansible_time_hour: "{{ ansible_date_time.hour }}"
+    v_ansible_time_minute: "{{ ansible_date_time.minute }}"
+    v_ansible_time_weekday: "{{ ansible_date_time.weekday }}"
+
+  pre_tasks:
+  - block:
+      - debug: msg="The playbook will only execute if on Thursday and between 20:30 and 20:59"
+
+      - meta: end_play
+    when: (v_ansible_time_weekday != "Thursday" or v_ansible_time_hour != "20" or v_ansible_time_minute < "29")
+
+- import_playbook: playbook.yml
